@@ -66,7 +66,9 @@ const App = () => {
         clearNewPersonData()
         showNotification(`Added ${createdPerson.name}`)
       })
-
+      .catch(error => {
+        showNotification(error.response.data.error ?? 'Something went wrong', 'error')
+      })
   }
 
   const handleDelete = id => {
@@ -81,8 +83,8 @@ const App = () => {
 
     personsService
       .deletePerson(id)
-      .then(deletedPerson => {
-        setPersons(persons.filter(person => person.id !== deletedPerson.id))
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== personToDelete.id))
       })
   }
 
