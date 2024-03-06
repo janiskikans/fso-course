@@ -49,9 +49,8 @@ const App = () => {
           clearNewPersonData()
           showNotification(`Updated ${updatedPerson.name}`)
         })
-        .catch(() => {
-          showNotification(`Information of ${existingPerson.name} has already been removed from the server`, 'error')
-          setPersons(persons.filter(person => person.id !== existingPerson.id))
+        .catch((error) => {
+          showNotification(error.response.data.error ?? 'Something went wrong', 'error')
         })
       
       return
