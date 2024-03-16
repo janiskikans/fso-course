@@ -1,6 +1,20 @@
-const info = (...params) => console.log(...params)
+const info = (...params) => {
+  if (!shouldLog) {
+    return
+  }
 
-const error = (...params) => console.error(...params)
+  console.log(...params)
+}
+
+const error = (...params) => {
+  if (!shouldLog) {
+    return
+  }
+
+  console.error(...params)
+}
+
+const shouldLog = () => process.env.NODE_ENV !== 'test'
 
 module.exports = {
   info,
