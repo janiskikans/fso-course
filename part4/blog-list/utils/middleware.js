@@ -1,4 +1,5 @@
 const morgan = require('morgan')
+const jwt = require('jsonwebtoken')
 
 const requestLogger = () => {
   morgan.token('body', function (req) { return JSON.stringify(req.body)})
@@ -32,7 +33,35 @@ const errorHandler = (error, request, response, next) => {
     }
   }
 
+  if (error.name ===  'JsonWebTokenError') {
+    return response.status(400).json({ error: 'token missing or invalid' })
+  }
+
   next(error)
 }
 
-module.exports = { requestLogger, errorHandler }
+const verifyToken = async (request, response, next) => {
+  const token = getTokenFromRequest(request)
+  if (!token) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
+  const decodedToken = jwt.verify(token, process.env.APP_SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
+  request.authUserId = decodedToken.id
+  next()
+}
+
+const getTokenFromRequest = request => {
+  const authorization = request.get('Authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+
+  return null
+}
+
+module.exports = { requestLogger, errorHandler, verifyToken }
