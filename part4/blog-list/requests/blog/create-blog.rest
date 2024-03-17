@@ -3,8 +3,8 @@ content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcnlkb2UiLCJpZCI6IjY1ZjcxOWU3ZjM1MTEyMTU1Y2RhYjM1ZCIsImlhdCI6MTcxMDY5Mjg1MX0.6dbdoYh9VDRIekQYvYbbynQdLEUUsZAxa1PKAZAoh5Y
 
 {
-  "title": "Blog #5",
+  "title": "Blog #6",
   "author": "Mary Doe",
-  "url": "http://blog5.test",
+  "url": "http://blog6.test",
   "likes": 2
 }

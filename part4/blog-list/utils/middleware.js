@@ -1,5 +1,6 @@
 const morgan = require('morgan')
 const jwt = require('jsonwebtoken')
+const User = require('../models/user')
 
 const requestLogger = () => {
   morgan.token('body', function (req) { return JSON.stringify(req.body)})
@@ -51,7 +52,14 @@ const verifyToken = async (request, response, next) => {
     return response.status(401).json({ error: 'token invalid' })
   }
 
-  request.authUserId = decodedToken.id
+  const authUser = await User.findById(decodedToken.id)
+  if (!authUser) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
+  request.authToken = decodedToken
+  request.authUser = authUser
+
   next()
 }
 

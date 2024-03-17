@@ -39,4 +39,18 @@ const getNonExistingId = async () => {
   return blog._id.toString()
 }
 
-module.exports = { initialBlogs, getDbBlogs, deleteAllBlogs, getNonExistingId }
+const createBlog = async (userId) => {
+  const blog = new Blog({
+    title: 'Protected Blog',
+    author: 'John Doe',
+    url: 'https://nonexistingblogsite.com/',
+    likes: 0,
+    user: userId,
+  })
+
+  await blog.save()
+
+  return blog
+}
+
+module.exports = { initialBlogs, getDbBlogs, deleteAllBlogs, getNonExistingId, createBlog }
