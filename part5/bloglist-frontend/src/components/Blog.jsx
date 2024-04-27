@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, likeBlog, deleteBlog, showDelete }) => {
   const [showDetails, setShowDetails] = useState(false)
@@ -36,7 +36,7 @@ const Blog = ({ blog, likeBlog, deleteBlog, showDelete }) => {
         <div>{ blog.user?.name ?? 'unknown' }</div>
         {showDelete && <button onClick={handleRemoveClick}>remove</button>}
       </div>
-    </div>  
+    </div>
   )
 }
 
