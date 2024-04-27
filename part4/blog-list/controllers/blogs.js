@@ -26,6 +26,7 @@ blogsRouter.post('/', verifyToken, async (request, response) => {
   const user = request.authUser
   const blog = new Blog({ ...request.body, user: user.id })
   const savedBlog = await blog.save()
+  savedBlog.populate('user', { username: 1, name: 1 })
 
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
@@ -43,9 +44,9 @@ blogsRouter.delete('/:id', verifyToken, async (request, response) => {
     return response.status(403).json({ error: 'Forbidden' })
   }
 
-  const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
+  await Blog.findByIdAndDelete(request.params.id)
 
-  response.status(204).json(deletedBlog)
+  response.status(204).end()
 })
 
 blogsRouter.put('/:id', verifyToken, async (request, response) => {
@@ -67,15 +68,19 @@ blogsRouter.put('/:id', verifyToken, async (request, response) => {
     return response.status(404)
   }
 
-  if (request.authUser._id.toString() !== blog.user.toString()) {
-    return response.status(403).json({ error: 'Forbidden' })
+  const updatedBlogData = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes ?? 0,
+    user: body.user ?? blog.user.toString(),
   }
 
   const updatedBlog = await Blog.findByIdAndUpdate(
     request.params.id,
-    { title: body.title, author: body.author, url: body.url, likes: body.likes ?? 0 },
+    updatedBlogData,
     { new: true, runValidators: true, context: 'query' }
-  )
+  ).populate('user', { username: 1, name: 1 })
 
   return response.json(updatedBlog)
 })

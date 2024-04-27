@@ -20,6 +20,18 @@ const createBlog = async (newBlog) => {
   return response.data
 }
 
+const updateBlog = async (updatedBlog) => {
+  const response = await axios.put(`${BASE_URL}/${updatedBlog.id}`, updatedBlog, getBaseConfig())
+
+  return response.data
+}
+
+const deleteBlog = async (id) => {
+  const response = await axios.delete(`${BASE_URL}/${id}`, getBaseConfig())
+
+  return response.data
+}
+
 const setToken = (token = null) => {
   if (!token) {
     currentToken = null
@@ -28,4 +40,4 @@ const setToken = (token = null) => {
   currentToken = `Bearer ${token}`
 }
 
-export default { getAll, createBlog, setToken }
+export default { getAll, createBlog, updateBlog, deleteBlog, setToken }
