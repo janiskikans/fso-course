@@ -14,8 +14,8 @@ const getAll = () => {
   return axios.get(BASE_URL).then(response => response.data)
 }
 
-const createBlog = async (title, author, url) => {
-  const response = await axios.post(BASE_URL, {title, author, url}, getBaseConfig())
+const createBlog = async (newBlog) => {
+  const response = await axios.post(BASE_URL, newBlog, getBaseConfig())
 
   return response.data
 }

@@ -21,7 +21,7 @@ const App = () => {
     if (authUser) {
       const user = JSON.parse(authUser)
       setUser(user)
-      blogService.setToken()
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -54,6 +54,16 @@ const App = () => {
     window.localStorage.removeItem('authUser')
     setUser(null)
     blogService.setToken()
+  }
+
+  const createNewBlog = async (blogData) => {
+    try {
+      const newBlog = await blogService.createBlog(blogData)
+      setBlogs(blogs.concat(newBlog))
+      showNotification(`a new blog "${newBlog.title}" by ${newBlog.author} added`)
+    } catch (error) {
+      showNotification(error.response.data.error ?? 'Something went wrong', 'error')
+    }
   }
 
   if (user === null) {
@@ -97,10 +107,6 @@ const App = () => {
     height: 'fit-content'
   }
 
-  const handleCreateNewBlog = newBlog => {
-    setBlogs(blogs.concat(newBlog))
-  }
-
   return (
     <div>
       <Notification notification={notification} />
@@ -110,7 +116,7 @@ const App = () => {
         <button style={logoutButtonStyle} onClick={handleLogout}>logout</button>
       </div>
       <h2>create new</h2>
-      <CreateBlogForm showNotification={showNotification} handleCreateNewBlog={handleCreateNewBlog} />
+      <CreateBlogForm createBlog={createNewBlog} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
