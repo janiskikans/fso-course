@@ -25,15 +25,15 @@ const Blog = ({ blog, likeBlog, deleteBlog, showDelete }) => {
 
   return (
     <div style={blogStyle}>
-      <span style={blogTitleStyle}>{blog.title} {blog.author}</span>
+      <span style={blogTitleStyle} data-testid='blog-title'>{blog.title} {blog.author}</span>
       <button onClick={toggleDetails}>{ showDetails ? 'hide' : 'view' }</button>
-      <div style={detailsBlockStyle}>
-        <div>{blog.url}</div>
-        <div>
+      <div style={detailsBlockStyle} data-testid='blog-details'>
+        <div data-testid='blog-details-url'>{blog.url}</div>
+        <div data-testid='blog-details-likes'>
           likes {blog.likes}
           <button onClick={handleLikeClick}>like</button>
         </div>
-        <div>{ blog.user?.name ?? 'unknown' }</div>
+        <div data-testid='blog-details-user-name'>{ blog.user?.name ?? 'unknown' }</div>
         {showDelete && <button onClick={handleRemoveClick}>remove</button>}
       </div>
     </div>
