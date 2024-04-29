@@ -25,7 +25,7 @@ const Blog = ({ blog, likeBlog, deleteBlog, showDelete }) => {
 
   return (
     <div style={blogStyle}>
-      <span style={blogTitleStyle} data-testid='blog-title'>{blog.title} {blog.author}</span>
+      <span style={blogTitleStyle} data-testid='blog-title' className='blog-title'>{blog.title} {blog.author}</span>
       <button onClick={toggleDetails}>{ showDetails ? 'hide' : 'view' }</button>
       <div style={detailsBlockStyle} data-testid='blog-details'>
         <div data-testid='blog-details-url'>{blog.url}</div>

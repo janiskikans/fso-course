@@ -85,5 +85,32 @@ describe('Blog app', () => {
         await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
       })
     })
+
+    describe('and 2 blogs exist', () => {
+      beforeEach(async ({ page }) => {
+        await helper.createNewBlog(page)
+        await helper.createNewBlog(page, 'Blog #2', 'Mary Author')
+      })
+
+      test('blog with the most likes is displayed first', async ({ page }) => {
+        const firstBlog = await page.getByText('Blog #1 John Author')
+        const firstBlogLocator = await firstBlog.locator('..')
+
+        const secondBlog = await page.getByText('Blog #2 Mary Author')
+        const secondBlogLocator = await secondBlog.locator('..')
+
+        // Open details for both blogs and like the second one
+        await firstBlogLocator.getByRole('button', { name: 'view' }).click()
+        await secondBlogLocator.getByRole('button', { name: 'view' }).click()
+        await secondBlogLocator.getByRole('button', { name: 'like' }).click()
+
+        await expect(firstBlogLocator.getByText('likes 0')).toBeVisible()
+        await expect(secondBlogLocator.getByText('likes 1')).toBeVisible()
+
+        const blogs = await page.$$('.blog-title')
+        expect(await blogs[0].textContent()).toEqual('Blog #2 Mary Author')
+        expect(await blogs[1].textContent()).toEqual('Blog #1 John Author')
+      })
+    })
   })  
 })
