@@ -3,9 +3,9 @@ const helper = require('./helper')
 
 describe('Blog app', () => {
   const testUser = {
-    "username": "e2e",
-    "name": "John Tester",
-    "password": "e2epassword"
+    'username': 'e2e',
+    'name': 'John Tester',
+    'password': 'e2epassword',
   }
 
   beforeEach(async ({ page, request }) => {
@@ -40,9 +40,50 @@ describe('Blog app', () => {
     })
   
     test('a new blog can be created', async ({ page }) => {
-      await helper.createNewBlog(page, 'Blog #1', 'John Author', 'http://blog1.test')
+      await helper.createNewBlog(page)
       await helper.expectNotification(page, 'a new blog "Blog #1" by John Author added')
       await expect(page.getByText('Blog #1 John Author')).toBeVisible()
+    })
+
+    describe('and 1 blog exists', () => {
+      beforeEach(async ({ page }) => {
+        await helper.createNewBlog(page)
+      })
+
+      test('blog can be liked and like count increases', async ({ page }) => {
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByText('likes 0')).toBeVisible()
+        await page.getByRole('button', { name: 'like' }).click()
+        await expect(page.getByText('likes 1')).toBeVisible()
+      })
+
+      test('blog can be deleted', async ({ page }) => {
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByText('Blog #1 John Author')).toBeVisible()
+        page.on('dialog', async dialog => {
+          await dialog.accept()
+        });
+        await page.getByRole('button', { name: 'remove' }).click()
+        await expect(page.getByText('Blog #1 John Author')).toBeHidden()
+      })
+
+      test('only user that created blog can see "remove" button', async ({ page, request }) => {
+        // Second user
+        await request.post('/api/users', {
+          data: {
+            'username': 'e2e-second',
+            'name': 'John Tester Second',
+            'password': 'e2epassword',
+          }
+        })
+
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByRole('button', { name: 'remove' })).toBeVisible()
+        await page.getByRole('button', { name: 'logout' }).click()
+        await helper.loginWith(page, 'e2e-second', 'e2epassword')
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
+      })
     })
   })  
 })
