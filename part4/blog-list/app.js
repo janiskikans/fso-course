@@ -30,6 +30,11 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 // Routers
+if (process.env.NODE_ENV === 'test') {
+  const e2eRouter = require('./controllers/e2e')
+  app.use('/api/e2e', e2eRouter)
+}
+
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
